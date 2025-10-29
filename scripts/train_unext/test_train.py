@@ -127,6 +127,15 @@ crop_ds = CropCellImageDataset.from_dataset(
     object_coord_y_field='Metadata_Cells_Location_Center_Y',
     fov=(1080, 1080)
 )
+# never forget to configure input and target channel keys for the crop
+# dataset! Although the augmented dataset will be the one for training,
+# the cropped dataset is still needed for visualization and plotting!
+crop_ds.input_channel_keys = INPUT_CHANNEL_NAMES
+crop_ds.target_channel_keys = TARGET_CHANNEL_NAMES
+crop_ds.transform = MaxScaleNormalize(
+    p=1, 
+    normalization_factor=2**16 - 1,
+)
 aug_ds = AugmentedBBoxImageDataset.from_dataset(
     crop_ds,
     augment_to_n=10_000,
