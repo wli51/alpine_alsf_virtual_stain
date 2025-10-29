@@ -75,7 +75,7 @@ try:
     )
     print(f"Created MLflow experiment '{experiment_name}' with ID: {experiment_id}")
 except Exception as e:
-    if 'RESOURCE_ALREADY_EXISTS' in str(e):
+    if all(keyword in str(e).lower() for keyword in ['already', 'exists', 'experiment']):
         experiment = mlflow.get_experiment_by_name(experiment_name)
         experiment_id = experiment.experiment_id
         print(f"Experiment '{experiment_name}' already exists with ID: {experiment_id}")
