@@ -156,6 +156,21 @@ crop_ds_heldout.transform = MaxScaleNormalize(
 )
 crop_ds_heldout.input_channel_keys = INPUT_CHANNEL_NAMES
 crop_ds_heldout.target_channel_keys = TARGET_CHANNEL_NAMES
+batch = crop_ds_heldout[0]  # Test
+if batch is None or not isinstance(batch, tuple):
+    print("Heldout dataset sample retrieval failed.")
+    sys.exit(1)
+try:
+    _i, _t = batch
+    if _i is None or _t is None:
+        print("Heldout dataset sample unpacking failed.")
+        sys.exit(1)
+    if not isinstance(_i, torch.Tensor) or not isinstance(_t, torch.Tensor):
+        print("Heldout dataset sample unpacking returned non-tensor types.")
+        sys.exit(1)
+except Exception as e:
+    print(f"Heldout dataset sample unpacking failed: {e}")
+    sys.exit(1)
 
 print(f"Training dataset length: {len(aug_ds)}")
 print(f"Heldout dataset for visualization length: {len(crop_ds_heldout)}")
