@@ -263,7 +263,7 @@ cached_dataset.input_only_transform = AdvancedBlur(
 )
 
 print("Initializing model and optimizer...")
-run_name = run_name_prefix + TARGET_CHANNEL_NAMES
+run_name = run_name_prefix + str(TARGET_CHANNEL_NAMES)
 tags['run_name'] = run_name
 
 model = ConvNeXtUNet(
