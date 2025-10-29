@@ -240,7 +240,7 @@ loss = [
     ),
 ]
 tags['loss'] = loss
-tags['target_channels'] = TARGET_CHANNEL_NAMES[0]
+tags['target_channels'] = TARGET_CHANNEL_NAMES
 
 print("Setting up cached dataset with augmentations...")
 cached_dataset = CompactRAMCache(
@@ -263,7 +263,7 @@ cached_dataset.input_only_transform = AdvancedBlur(
 )
 
 print("Initializing model and optimizer...")
-run_name = run_name_prefix + TARGET_CHANNEL_NAMES[0]
+run_name = run_name_prefix + TARGET_CHANNEL_NAMES
 tags['run_name'] = run_name
 
 model = ConvNeXtUNet(
