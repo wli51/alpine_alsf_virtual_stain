@@ -63,7 +63,7 @@ TRAIN_PLOT_DIR.mkdir(parents=True, exist_ok=True)
 TMP_DIR = TRAIN_DIR / 'tmp'
 TMP_DIR.mkdir(parents=True, exist_ok=True)
 
-mlflow_track_uri = str(TRAIN_LOG_DIR.resolve())
+mlflow_track_uri = TRAIN_LOG_DIR.resolve().as_uri()
 mlflow.set_tracking_uri(mlflow_track_uri)
 print(f"MLflow tracking URI set to: {mlflow.get_tracking_uri()}")
 
@@ -71,7 +71,7 @@ experiment_name = "test_unext_experiment"
 try:
     experiment_id = mlflow.create_experiment(
         name=experiment_name,
-        tags="test"
+        tags={'purpose': 'test'}
     )
     print(f"Created MLflow experiment '{experiment_name}' with ID: {experiment_id}")
 except Exception as e:
@@ -323,7 +323,7 @@ plot_callback_heldout = PlotPredictionCallback(
 
 logger = MlflowLogger(
     name='logger',
-    tracking_uri = str(TRAIN_LOG_DIR),
+    tracking_uri=mlflow_track_uri,
     experiment_name=experiment_name,
     run_name=f'train_{run_name}',
     experiment_type='train',
