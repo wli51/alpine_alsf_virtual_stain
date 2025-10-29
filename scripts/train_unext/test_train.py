@@ -6,6 +6,7 @@ import pathlib
 import sys
 
 import torch
+import mlflow
 import pandas as pd
 
 from virtual_stain_flow.transforms.normalizations import MaxScaleNormalize
@@ -53,7 +54,7 @@ CONFLUENCE = 2_000
 
 TRAIN_ROOT = pathlib.Path('/projects/wli19@xsede.org/')
 TRAIN_ROOT.resolve(strict=False)
-TRAIN_DIR = TRAIN_ROOT / "demo_unext_training"
+TRAIN_DIR = TRAIN_ROOT
 TRAIN_DIR.mkdir(parents=True, exist_ok=True)
 TRAIN_LOG_DIR = TRAIN_DIR / "mlruns"
 TRAIN_LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -62,6 +63,21 @@ TRAIN_PLOT_DIR.mkdir(parents=True, exist_ok=True)
 TMP_DIR = TRAIN_DIR / 'tmp'
 TMP_DIR.mkdir(parents=True, exist_ok=True)
 
+experiment_name = "test_unext_experiment"
+try:
+    experiment_id = mlflow.create_experiment(
+        name=experiment_name,
+        tags="test"
+    )
+    print(f"Created MLflow experiment '{experiment_name}' with ID: {experiment_id}")
+except Exception as e:
+    if 'RESOURCE_ALREADY_EXISTS' in str(e):
+        experiment = mlflow.get_experiment_by_name(experiment_name)
+        experiment_id = experiment.experiment_id
+        print(f"Experiment '{experiment_name}' already exists with ID: {experiment_id}")
+    else:
+        print(f"Experiment creation failed: {e}")
+        sys.exit(1)
 
 print(f"Filtering loaddata to only include seeding_density == {CONFLUENCE}.")
 
@@ -303,8 +319,8 @@ plot_callback_heldout = PlotPredictionCallback(
 
 logger = MlflowLogger(
     name='logger',
-    tracking_uri = str(TRAIN_LOG_DIR.resolve()),
-    experiment_name='0',
+    tracking_uri = str(TRAIN_LOG_DIR.resolve() / 'mlruns'),
+    experiment_name=experiment_name,
     run_name=f'train_{run_name}',
     experiment_type='train',
     model_architecture='UNet+wGAN',
