@@ -173,6 +173,7 @@ device = torch.device("cuda:0")
 
 
 # Training configuration
+print("Starting training configuration...")
 run_name_prefix = f'UNeXt_density={CONFLUENCE}_hybrid_l1_msssim_loss_'
 loss_weights = [
     1.0, # l1
@@ -241,6 +242,7 @@ loss = [
 tags['loss'] = loss
 tags['target_channels'] = TARGET_CHANNEL_NAMES[0]
 
+print("Setting up cached dataset with augmentations...")
 cached_dataset = CompactRAMCache(
     dataset=aug_ds,
     cache_size=None,
@@ -260,6 +262,7 @@ cached_dataset.input_only_transform = AdvancedBlur(
     noise_limit=(0.9, 1.1)
 )
 
+print("Initializing model and optimizer...")
 run_name = run_name_prefix + TARGET_CHANNEL_NAMES[0]
 tags['run_name'] = run_name
 
@@ -280,7 +283,7 @@ model_optim = optim.Adam(
 
 _ = model.to(device)
 
-
+print("Setting up logger and plotting callbacks...")
 now = datetime.now()
 timestamp_string = now.strftime("%Y-%m-%d-%H:%M:%S")
 
@@ -323,7 +326,7 @@ plot_callback_heldout = PlotPredictionCallback(
 
 logger = MlflowLogger(
     name='logger',
-    tracking_uri=mlflow_track_uri,
+    tracking_uri=str(TRAIN_LOG_DIR.resolve()),
     experiment_name=experiment_name,
     run_name=f'train_{run_name}',
     experiment_type='train',
@@ -344,6 +347,8 @@ metric_fns = {
     "ssim_loss": SSIM(_metric_name="ssim"),
     "psnr_loss": PSNR(_metric_name="psnr"),
 }
+
+print("Starting training...")
 
 EPOCHS = 50
 trainer = LoggingTrainer(
