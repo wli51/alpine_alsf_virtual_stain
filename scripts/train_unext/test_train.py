@@ -59,7 +59,7 @@ TRAIN_LOG_DIR = TRAIN_DIR / "mlruns"
 TRAIN_LOG_DIR.mkdir(parents=True, exist_ok=True)
 TRAIN_PLOT_DIR = TRAIN_DIR / "plots"
 TRAIN_PLOT_DIR.mkdir(parents=True, exist_ok=True)
-TMP_DIR = TRAIN_ROOT / 'tmp'
+TMP_DIR = TRAIN_DIR / 'tmp'
 TMP_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -303,8 +303,8 @@ plot_callback_heldout = PlotPredictionCallback(
 
 logger = MlflowLogger(
     name='logger',
-    tracking_uri = str(TRAIN_DIR / 'mlruns'),
-    experiment_name='Default',
+    tracking_uri = str(TRAIN_LOG_DIR.resolve()),
+    experiment_name='0',
     run_name=f'train_{run_name}',
     experiment_type='train',
     model_architecture='UNet+wGAN',
