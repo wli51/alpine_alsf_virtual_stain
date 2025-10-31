@@ -229,7 +229,7 @@ tags = {
     'discriminator_optimizer': 'Adam',
     'discriminator_optim_lr': 0.0002,
     'discriminator_optim_betas': (0.5, 0.999),
-    'batch_size': 2,
+    'batch_size': 4,
     'loss': None,
     'loss_weights': loss_weights,
     'early_termination_metric': 'L1Loss',
